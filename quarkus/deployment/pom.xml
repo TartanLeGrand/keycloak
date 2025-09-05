@@ -218,16 +218,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-jdbc-oracle-deployment</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.quarkus</groupId>
-                    <artifactId>quarkus-devservices-oracle</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!-- Oracle JDBC deployment moved to profiles for conditional inclusion -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-bootstrap-core</artifactId>
@@ -315,5 +306,74 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>jvm</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <!-- Oracle JDBC deployment - included for JVM builds -->
+                <dependency>
+                    <groupId>io.quarkus</groupId>
+                    <artifactId>quarkus-jdbc-oracle-deployment</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>io.quarkus</groupId>
+                            <artifactId>quarkus-devservices-oracle</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>native</id>
+            <activation>
+                <property>
+                    <name>native</name>
+                </property>
+            </activation>
+            <dependencies>
+                <!-- Override runtime dependency to exclude Oracle JDBC for native builds -->
+                <dependency>
+                    <groupId>org.keycloak</groupId>
+                    <artifactId>keycloak-quarkus-server</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>io.quarkus</groupId>
+                            <artifactId>quarkus-jdbc-oracle</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>io.quarkus</groupId>
+                            <artifactId>quarkus-jdbc-oracle-deployment</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <!-- No Oracle JDBC deployment dependency for native builds -->
+            </dependencies>
+        </profile>
+        <profile>
+            <id>oracle-support</id>
+            <activation>
+                <property>
+                    <name>oracle.support</name>
+                </property>
+            </activation>
+            <dependencies>
+                <!-- Oracle JDBC deployment - when explicitly enabled -->
+                <dependency>
+                    <groupId>io.quarkus</groupId>
+                    <artifactId>quarkus-jdbc-oracle-deployment</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>io.quarkus</groupId>
+                            <artifactId>quarkus-devservices-oracle</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
 </project>
