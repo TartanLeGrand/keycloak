@@ -316,4 +316,28 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>native</id>
+            <activation>
+                <property>
+                    <name>native</name>
+                </property>
+            </activation>
+            <dependencies>
+                <!-- Override runtime dependency to exclude Oracle JDBC for native builds -->
+                <dependency>
+                    <groupId>org.keycloak</groupId>
+                    <artifactId>keycloak-quarkus-server</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>io.quarkus</groupId>
+                            <artifactId>quarkus-jdbc-oracle</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
 </project>
